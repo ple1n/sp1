@@ -98,6 +98,7 @@ impl<F: PrimeField32> MachineAir<F> for PublicValuesChip {
                 let mut row = [BabyBear::zero(); NUM_PUBLIC_VALUES_PREPROCESSED_COLS];
                 let cols: &mut PublicValuesPreprocessedCols<BabyBear> =
                     row.as_mut_slice().borrow_mut();
+                #[cfg(feature = "sys")]
                 unsafe {
                     crate::sys::public_values_instr_to_row_babybear(instr, i, cols);
                 }
@@ -152,6 +153,7 @@ impl<F: PrimeField32> MachineAir<F> for PublicValuesChip {
             for i in 0..DIGEST_SIZE {
                 let mut row = [BabyBear::zero(); NUM_PUBLIC_VALUES_COLS];
                 let cols: &mut PublicValuesCols<BabyBear> = row.as_mut_slice().borrow_mut();
+                #[cfg(feature = "sys")]
                 unsafe {
                     crate::sys::public_values_event_to_row_babybear(bb_event, i, cols);
                 }

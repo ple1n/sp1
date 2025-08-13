@@ -107,6 +107,7 @@ impl<F: PrimeField32 + BinomiallyExtendable<D>> MachineAir<F> for ExtAluChip {
         values[..populate_len].par_chunks_mut(NUM_EXT_ALU_ACCESS_COLS).zip_eq(instrs).for_each(
             |(row, instr)| {
                 let access: &mut ExtAluAccessCols<_> = row.borrow_mut();
+                #[cfg(feature = "sys")]
                 unsafe {
                     crate::sys::alu_ext_instr_to_row_babybear(instr, access);
                 }
@@ -154,6 +155,7 @@ impl<F: PrimeField32 + BinomiallyExtendable<D>> MachineAir<F> for ExtAluChip {
         values[..populate_len].par_chunks_mut(NUM_EXT_ALU_VALUE_COLS).zip_eq(events).for_each(
             |(row, &vals)| {
                 let cols: &mut ExtAluValueCols<_> = row.borrow_mut();
+                #[cfg(feature = "sys")]
                 unsafe {
                     crate::sys::alu_ext_event_to_row_babybear(&vals, cols);
                 }

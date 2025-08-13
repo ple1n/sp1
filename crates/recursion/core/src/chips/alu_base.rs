@@ -108,6 +108,7 @@ impl<F: PrimeField32> MachineAir<F> for BaseAluChip {
         values[..populate_len].par_chunks_mut(NUM_BASE_ALU_ACCESS_COLS).zip_eq(instrs).for_each(
             |(row, instr)| {
                 let access: &mut BaseAluAccessCols<_> = row.borrow_mut();
+                #[cfg(feature = "sys")]
                 unsafe {
                     crate::sys::alu_base_instr_to_row_babybear(instr, access);
                 }
@@ -154,6 +155,7 @@ impl<F: PrimeField32> MachineAir<F> for BaseAluChip {
         values[..populate_len].par_chunks_mut(NUM_BASE_ALU_VALUE_COLS).zip_eq(events).for_each(
             |(row, &vals)| {
                 let cols: &mut BaseAluValueCols<_> = row.borrow_mut();
+                #[cfg(feature = "sys")]
                 unsafe {
                     crate::sys::alu_base_event_to_row_babybear(&vals, cols);
                 }

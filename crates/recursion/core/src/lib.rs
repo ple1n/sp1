@@ -7,10 +7,12 @@ use crate::air::{Block, RecursionPublicValues};
 pub mod air;
 pub mod builder;
 pub mod chips;
+
 pub mod machine;
 pub mod runtime;
 pub mod shape;
 pub mod stark;
+
 #[cfg(feature = "sys")]
 pub mod sys;
 

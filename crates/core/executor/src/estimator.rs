@@ -24,5 +24,5 @@ pub struct RecordEstimator {
     /// Used to calculate local memory events.
     pub current_precompile_touched_compressed_addresses: RangeSetBlaze<u32>,
     /// More correct number of local memory events for the current shard.
-    pub current_local_mem: usize,
+    pub current_local_mem: u64,
 }

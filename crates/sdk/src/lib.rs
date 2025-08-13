@@ -27,6 +27,7 @@
 pub mod artifacts;
 pub mod client;
 pub mod cpu;
+#[cfg(feature = "cuda")]
 pub mod cuda;
 pub mod env;
 pub mod install;
@@ -38,7 +39,10 @@ pub mod utils;
 pub use crate::client::ProverClient;
 
 // Re-export the provers.
-pub use crate::{cpu::CpuProver, cuda::CudaProver, env::EnvProver};
+pub use crate::{cpu::CpuProver, env::EnvProver};
+
+#[cfg(feature = "cuda")]
+pub use crate::cuda::CudaProver;
 
 #[cfg(feature = "network")]
 pub use crate::network::{

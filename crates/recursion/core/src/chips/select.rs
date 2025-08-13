@@ -87,6 +87,7 @@ impl<F: PrimeField32> MachineAir<F> for SelectChip {
         values[..populate_len].par_chunks_mut(SELECT_PREPROCESSED_COLS).zip_eq(instrs).for_each(
             |(row, instr)| {
                 let cols: &mut SelectPreprocessedCols<_> = row.borrow_mut();
+                #[cfg(feature = "sys")]
                 unsafe {
                     crate::sys::select_instr_to_row_babybear(instr, cols);
                 }
@@ -127,6 +128,7 @@ impl<F: PrimeField32> MachineAir<F> for SelectChip {
         values[..populate_len].par_chunks_mut(SELECT_COLS).zip_eq(events).for_each(
             |(row, &vals)| {
                 let cols: &mut SelectCols<_> = row.borrow_mut();
+                #[cfg(feature = "sys")]
                 unsafe {
                     crate::sys::select_event_to_row_babybear(&vals, cols);
                 }

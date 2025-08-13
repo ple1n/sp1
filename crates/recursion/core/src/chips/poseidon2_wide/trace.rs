@@ -61,6 +61,7 @@ impl<F: PrimeField32, const DEGREE: usize> MachineAir<F> for Poseidon2WideChip<D
         let (values_pop, values_dummy) = values.split_at_mut(populate_len);
 
         let populate_perm_ffi = |input: &[BabyBear; WIDTH], input_row: &mut [BabyBear]| unsafe {
+            #[cfg(feature = "sys")]
             crate::sys::poseidon2_wide_event_to_row_babybear(
                 input.as_ptr(),
                 input_row.as_mut_ptr(),
@@ -140,6 +141,7 @@ impl<F: PrimeField32, const DEGREE: usize> MachineAir<F> for Poseidon2WideChip<D
             .zip_eq(instrs)
             .for_each(|(row, instr)| {
                 let cols: &mut Poseidon2PreprocessedColsWide<_> = row.borrow_mut();
+                #[cfg(feature = "sys")]
                 unsafe {
                     crate::sys::poseidon2_wide_instr_to_row_babybear(instr, cols);
                 }

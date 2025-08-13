@@ -11,6 +11,8 @@ use anyhow::Result;
 use prove::EnvProveBuilder;
 use sp1_core_executor::SP1ContextBuilder;
 use sp1_core_machine::io::SP1Stdin;
+#[cfg(feature = "cuda")]
+
 use sp1_cuda::MoongateServer;
 use sp1_prover::{components::CpuProverComponents, SP1Prover, SP1ProvingKey, SP1VerifyingKey};
 
@@ -19,10 +21,12 @@ use super::{Prover, SP1VerificationError};
 use crate::network::builder::NetworkProverBuilder;
 use crate::{
     cpu::{execute::CpuExecuteBuilder, CpuProver},
-    cuda::CudaProver,
     utils::{check_release_build, setup_memory_usage_monitoring},
     SP1ProofMode, SP1ProofWithPublicValues,
 };
+
+#[cfg(feature = "cuda")]
+use crate::cuda::CudaProver;
 
 /// A prover that can execute programs and generate proofs with a different implementation based on
 /// the value of certain environment variables.
@@ -59,6 +63,11 @@ impl EnvProver {
             "cuda" => {
                 check_release_build();
                 setup_memory_usage_monitoring();
+             
+                #[cfg(not(feature = "cuda"))]
+                unreachable!();
+
+                #[cfg(feature = "cuda")]
                 Box::new(CudaProver::new(SP1Prover::new(), MoongateServer::default()))
             }
             "network" => {

@@ -128,6 +128,7 @@ impl<F: PrimeField32, const DEGREE: usize> MachineAir<F> for FriFoldChip<DEGREE>
                 row_add.iter_mut().enumerate().for_each(|(row_idx, row)| {
                     let cols: &mut FriFoldPreprocessedCols<BabyBear> =
                         row.as_mut_slice().borrow_mut();
+                    #[cfg(feature = "sys")]
                     unsafe {
                         crate::sys::fri_fold_instr_to_row_babybear(
                             &instruction.into(),
@@ -187,6 +188,7 @@ impl<F: PrimeField32, const DEGREE: usize> MachineAir<F> for FriFoldChip<DEGREE>
             .map(|event| {
                 let mut row = [BabyBear::zero(); NUM_FRI_FOLD_COLS];
                 let cols: &mut FriFoldCols<BabyBear> = row.as_mut_slice().borrow_mut();
+                #[cfg(feature = "sys")]
                 unsafe {
                     crate::sys::fri_fold_event_to_row_babybear(event, cols);
                 }
@@ -429,10 +431,10 @@ mod tests {
                 let ro_output = (0..i)
                     .map(|i| {
                         let i = i as usize;
-                        ro_input[i].ext::<EF>() +
-                            alpha_pow_input[i].ext::<EF>() *
-                                (-ps_at_z[i].ext::<EF>() + mat_opening[i].ext::<EF>()) /
-                                (-z.ext::<EF>() + x)
+                        ro_input[i].ext::<EF>()
+                            + alpha_pow_input[i].ext::<EF>()
+                                * (-ps_at_z[i].ext::<EF>() + mat_opening[i].ext::<EF>())
+                                / (-z.ext::<EF>() + x)
                     })
                     .collect::<Vec<EF>>();
 

@@ -59,12 +59,15 @@ impl<F: PrimeField32, const DEGREE: usize> MachineAir<F> for Poseidon2SkinnyChip
         };
         for event in events {
             let mut row_add = [[BabyBear::zero(); NUM_POSEIDON2_COLS]; NUM_EXTERNAL_ROUNDS + 3];
+            #[cfg(feature = "sys")]
             unsafe {
                 crate::sys::poseidon2_skinny_event_to_row_babybear(
                     event,
                     row_add.as_mut_ptr() as *mut Poseidon2Cols<BabyBear>,
                 );
             }
+            #[cfg(not(feature = "sys"))]
+            unreachable!();
             rows.extend(row_add.into_iter());
         }
 
@@ -120,6 +123,7 @@ impl<F: PrimeField32, const DEGREE: usize> MachineAir<F> for Poseidon2SkinnyChip
                 row_add.into_iter().enumerate().for_each(|(i, row)| {
                     let cols: &mut Poseidon2PreprocessedCols<_> =
                         (*row).as_mut_slice().borrow_mut();
+                    #[cfg(feature = "sys")]
                     unsafe {
                         crate::sys::poseidon2_skinny_instr_to_row_babybear(instruction, i, cols);
                     }

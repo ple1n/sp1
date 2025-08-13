@@ -171,6 +171,7 @@ impl<F: PrimeField32, const DEGREE: usize> MachineAir<F> for ExpReverseBitsLenCh
 
             rows.iter_mut().enumerate().for_each(|(i, row)| {
                 let cols: &mut ExpReverseBitsLenCols<BabyBear> = row.as_mut_slice().borrow_mut();
+                #[cfg(feature = "sys")]
                 unsafe {
                     crate::sys::exp_reverse_bits_event_to_row_babybear(&event.into(), i, cols);
                 }
@@ -455,9 +456,9 @@ mod tests {
                 let cols: &mut ExpReverseBitsLenCols<F> = row.as_mut_slice().borrow_mut();
 
                 let prev_accum = accum;
-                accum = prev_accum *
-                    prev_accum *
-                    if event.exp[i] == F::one() { event.base } else { F::one() };
+                accum = prev_accum
+                    * prev_accum
+                    * if event.exp[i] == F::one() { event.base } else { F::one() };
 
                 cols.x = event.base;
                 cols.current_bit = event.exp[i];
